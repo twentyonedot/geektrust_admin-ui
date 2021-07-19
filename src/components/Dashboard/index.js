@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Dashboard.module.css";
-import Paginate from "../Paginate";
+import PaginateBar from "../PaginateBar";
 import { config } from "../../config/config";
 import { FiEdit, FiSave } from "react-icons/fi";
 import { IoMdCloseCircleOutline as IoClose } from "react-icons/io";
@@ -25,6 +25,7 @@ export default function Dashboard() {
   });
   const [allSelected, setAllSelected] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [refresh, setRefresh] = useState(0);
   /* Function Handlers */
 
   /**
@@ -186,7 +187,7 @@ export default function Dashboard() {
     const searchKey = args?.target.value.toLowerCase();
     let data = [...usersData];
     if (searchKey) {
-      data = filteredUsers.filter((obj) =>
+      data = data.filter((obj) =>
         Object.keys(obj).some((key) => {
           if (typeof obj[key] === "string") {
             return obj[key].toLowerCase().includes(searchKey);
@@ -194,6 +195,7 @@ export default function Dashboard() {
           return false;
         })
       );
+      setRefresh(!refresh);
     }
     setFilteredUsers(data);
   };
@@ -333,9 +335,10 @@ export default function Dashboard() {
           Delete Selected
         </button>
         {filteredUsers.length > 0 && (
-          <Paginate
+          <PaginateBar
             totalItems={filteredUsers.length}
             onPageChange={onPageChangeHandler}
+            refresh={refresh}
           />
         )}
       </div>
