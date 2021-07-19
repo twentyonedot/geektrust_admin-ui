@@ -183,13 +183,13 @@ export default function Dashboard() {
   };
 
   const updateUsers = (args) => {
-    const searchKey = args?.target.value;
+    const searchKey = args?.target.value.toLowerCase();
     let data = [...usersData];
     if (searchKey) {
       data = filteredUsers.filter((obj) =>
         Object.keys(obj).some((key) => {
           if (typeof obj[key] === "string") {
-            return obj[key].includes(searchKey);
+            return obj[key].toLowerCase().includes(searchKey);
           }
           return false;
         })
