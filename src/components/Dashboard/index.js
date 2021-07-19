@@ -24,7 +24,7 @@ export default function Dashboard() {
     role: "",
   });
   const [allSelected, setAllSelected] = useState(false);
-
+  const [filteredUsers, setFilteredUsers] = useState([]);
   /* Function Handlers */
 
   /**
@@ -37,6 +37,7 @@ export default function Dashboard() {
     data = data.map((user) => {
       return { ...user, editStatus: false, selected: false };
     });
+    setFilteredUsers(data);
     setUsersData(data);
   };
 
@@ -46,13 +47,13 @@ export default function Dashboard() {
    * @returns {void}
    */
   const editHandler = (id) => {
-    let data = usersData.map((user) => {
+    let data = filteredUsers.map((user) => {
       if (user.id === id) {
         return { ...user, editStatus: true };
       }
       return user;
     });
-    setUsersData(data);
+    setFilteredUsers(data);
   };
 
   /**
@@ -61,14 +62,14 @@ export default function Dashboard() {
    * @returns {void}
    */
   const closeHandler = (id) => {
-    let data = usersData.map((user) => {
+    let data = filteredUsers.map((user) => {
       if (user.id === id) {
         return { ...user, editStatus: false };
       }
       return user;
     });
     setSavedUser({ name: "", email: "", role: "" });
-    setUsersData(data);
+    setFilteredUsers(data);
   };
 
   /**
@@ -77,7 +78,7 @@ export default function Dashboard() {
    * @returns {void}
    */
   const saveHandler = (id) => {
-    let data = usersData.map((user) => {
+    let data = filteredUsers.map((user) => {
       if (user.id === id) {
         return {
           id: user.id,
@@ -90,17 +91,17 @@ export default function Dashboard() {
       return user;
     });
     setSavedUser({ name: "", email: "", role: "" });
-    setUsersData(data);
+    setFilteredUsers(data);
   };
 
   /**
-   * @description deletes the user, and update the state of the usersData.
+   * @description deletes the user, and update the state of the filteredUsers.
    * @param {*} id The id of the user that is to be deleted.
    * @returns {void}
    */
   const deleteHandler = (id) => {
-    let data = usersData.filter((user) => user.id !== id);
-    setUsersData(data);
+    let data = filteredUsers.filter((user) => user.id !== id);
+    setFilteredUsers(data);
   };
 
   /**
@@ -123,21 +124,21 @@ export default function Dashboard() {
       endIndex: end,
     });
     setAllSelected(false);
-    let data = usersData.map((val) => {
+    let data = filteredUsers.map((val) => {
       return { ...val, selected: false };
     });
-    setUsersData(data);
+    setFilteredUsers(data);
   };
 
   /**
-   * @description updates the `selected` field of the usersData.
+   * @description updates the `selected` field of the filteredUsers.
    * @param {*} event
    */
   const allSelectHandler = (event) => {
     setAllSelected(!allSelected);
     let data;
     if (event.target.checked) {
-      data = usersData.map((val) => {
+      data = filteredUsers.map((val) => {
         if (
           val.id > currentPageUsers.startIndex &&
           val.id <= currentPageUsers.endIndex + 1
@@ -146,7 +147,7 @@ export default function Dashboard() {
         return val;
       });
     } else {
-      data = usersData.map((val) => {
+      data = filteredUsers.map((val) => {
         if (
           val.id > currentPageUsers.startIndex &&
           val.id <= currentPageUsers.endIndex + 1
@@ -155,15 +156,15 @@ export default function Dashboard() {
         return val;
       });
     }
-    setUsersData(data);
+    setFilteredUsers(data);
   };
 
   /**
    * @description Function handler for `Delete Selected` button.
    */
   const deleteSelectedHandler = () => {
-    let data = usersData.filter((val) => !val.selected);
-    setUsersData(data);
+    let data = filteredUsers.filter((val) => !val.selected);
+    setFilteredUsers(data);
   };
 
   /**
@@ -171,18 +172,56 @@ export default function Dashboard() {
    * @param {*} id The id of the user that is to be toggled.
    */
   const selectChangeHandler = (id) => {
-    let data = usersData.map((user) => {
+    let data = filteredUsers.map((user) => {
       if (user.id === id) {
         return { ...user, selected: !user.selected };
       }
       return user;
     });
     setAllSelected(false);
-    setUsersData(data);
+    setFilteredUsers(data);
   };
+
+  const updateUsers = (args) => {
+    const searchKey = args?.target.value;
+    let data = [...usersData];
+    if (searchKey) {
+      data = filteredUsers.filter((obj) =>
+        Object.keys(obj).some((key) => {
+          if (typeof obj[key] === "string") {
+            return obj[key].includes(searchKey);
+          }
+          return false;
+        })
+      );
+    }
+    setFilteredUsers(data);
+  };
+
+  const debounce = function (fn, d) {
+    let timerId;
+    return function () {
+      const context = this,
+        args = arguments;
+      clearTimeout(timerId);
+      timerId = setTimeout(function () {
+        fn.apply(context, args);
+      }, d);
+    };
+  };
+
+  const debounceSearch = debounce(updateUsers, 300);
 
   return (
     <div>
+      <div>
+        <input
+          onKeyUp={debounceSearch}
+          className={styles.search}
+          type="text"
+          placeholder="Search by name, email or role"
+        />
+      </div>
       <table className={`${styles.userTable}`}>
         <thead>
           <tr>
@@ -200,7 +239,7 @@ export default function Dashboard() {
           </tr>
         </thead>
         <tbody>
-          {usersData
+          {filteredUsers
             .slice(
               currentPageUsers.startIndex,
               currentPageUsers.startIndex + 10
@@ -290,12 +329,12 @@ export default function Dashboard() {
         </tbody>
       </table>
       <div style={{ display: "flex" }}>
-        <button className={styles.deleteBtn}  onClick={deleteSelectedHandler}>
+        <button className={styles.deleteBtn} onClick={deleteSelectedHandler}>
           Delete Selected
         </button>
-        {usersData.length > 0 && (
+        {filteredUsers.length > 0 && (
           <Paginate
-            totalItems={usersData.length}
+            totalItems={filteredUsers.length}
             onPageChange={onPageChangeHandler}
           />
         )}
