@@ -1,70 +1,116 @@
-# Getting Started with Create React App
+# Admin-UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend for Admin Dashboard
 
-## Available Scripts
+## Tech Stack
 
-In the project directory, you can run:
+React (Built with create-react-app), Module CSS
 
-### `npm start`
+## Demo
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+https://twentyonedot-adminui.netlify.app/
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Run Locally
 
-### `npm test`
+Clone the project
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+  git clone https://link-to-project
+```
 
-### `npm run build`
+Go to the project directory
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+  cd my-project
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Install dependencies
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+  npm install
+```
 
-### `npm run eject`
+Start the server
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+  npm start
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The Server will starts on `port:3000` by default.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```bash
+    http://localhost:3000
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Screenshots
 
-## Learn More
+1. ![App Screenshot](https://i.postimg.cc/qvb7vjD9/Clean-Shot-2021-07-19-at-15-30-42-2x.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. ![App Screenshot](https://i.postimg.cc/G2jVbSqD/Clean-Shot-2021-07-19-at-15-32-57-2x.png)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Features
 
-### Code Splitting
+- Edit single or multiple fields.
+- Delete single, mulitple or all users in a page.
+- Pagination with extra controls
+- Search feature.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Optimizations
 
-### Analyzing the Bundle Size
+- Debouncing technique to improve the **search** feature
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Appendix
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```javascript
+function paginate(
+  totalItems,
+  currentPage = 1,
+  itemsPerPage = 10,
+  pagesPerView = 10
+) {
+  // calculate total pages
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // calculate start and end page numbers
+  let startPageNumber, endPageNumber;
+  if (totalPages <= pagesPerView) {
+    startPageNumber = 1;
+    endPageNumber = totalPages;
+  } else {
+    startPageNumber = currentPage - Math.floor(pagesPerView / 2);
+    if (startPageNumber < 1) {
+      startPageNumber = 1;
+    }
+    endPageNumber = startPageNumber + pagesPerView - 1;
+    if (endPageNumber > totalPages) {
+      endPageNumber = totalPages;
+      startPageNumber = endPageNumber - pagesPerView + 1;
+    }
+  }
+  // calculate start and end index of items of the current page
+  const startItemIndex = (currentPage - 1) * itemsPerPage;
+  const endItemIndex = Math.min(
+    startItemIndex + itemsPerPage - 1,
+    totalItems - 1
+  );
+  // fill page numbers in pages Array
+  const pages = [];
+  for (let i = startPageNumber; i <= endPageNumber; i++) {
+    pages.push(i);
+  }
+  // fill items in pages Array
+  const items = [];
+  for (let i = startItemIndex; i <= endItemIndex; i++) {
+    items.push(i);
+  }
+  return {
+    totalPages,
+    startPageNumber,
+    endPageNumber,
+    startItemIndex,
+    endItemIndex,
+    currentPage,
+    pages,
+    items,
+  };
+}
+```
