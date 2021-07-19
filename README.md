@@ -60,7 +60,7 @@ The Server will starts on `port:3000` by default.
 - Debouncing technique to improve the **search** feature
 
 ## Appendix
-
+Paginate Function
 ```javascript
 function paginate(
   totalItems,
