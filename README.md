@@ -44,9 +44,11 @@ The Server will starts on `port:3000` by default.
 
 ## Screenshots
 
-1. ![App Screenshot](https://i.postimg.cc/qvb7vjD9/Clean-Shot-2021-07-19-at-15-30-42-2x.png)
+1. ![App Screenshot](https://i.postimg.cc/2y2trWqR/Clean-Shot-2021-07-19-at-17-22-17-2x.png)
 
 2. ![App Screenshot](https://i.postimg.cc/G2jVbSqD/Clean-Shot-2021-07-19-at-15-32-57-2x.png)
+
+3. ![App Screenshot](https://i.postimg.cc/tThQQ7tp/Clean-Shot-2021-07-19-at-17-21-59-2x.png)
 
 ## Features
 
@@ -60,7 +62,9 @@ The Server will starts on `port:3000` by default.
 - Debouncing technique to improve the **search** feature
 
 ## Appendix
+
 Paginate Function
+
 ```javascript
 function paginate(
   totalItems,
