@@ -24,6 +24,11 @@ export default function PaginateBar(props) {
     setPaginateProps(data);
   }, []);
 
+  /*
+   *  Fetches paginateProps using `Paginate` function and ̰
+   *  updates the state of paginateProps, when there is a change in totalItems.
+   *  The idea behind the implementation of this useeffect is that, when user searches for any user, in addition to displaying the users, we also need to update the pagination bar.
+   */
   useEffect(() => {
     const { totalItems } = props;
     const data = paginate(totalItems);
